@@ -495,6 +495,83 @@
     white-space: nowrap;
   }
 
+  /* intro overlay */
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 26px;
+    transition: opacity 0.9s ease;
+  }
+  .intro.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .intro .h-script {
+    font-size: 48px;
+  }
+  .intro-note {
+    margin-top: 10px;
+    font-size: 17px;
+    color: var(--ink-soft);
+  }
+  .intro-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 34px;
+    padding: 16px 40px;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(160deg, var(--rose), var(--rose-deep));
+    color: #fffdfb;
+    font-family: inherit;
+    font-size: 16px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 12px 26px rgba(201, 132, 143, 0.4);
+  }
+  .intro-btn:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  /* sound toggle */
+  .sound {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 40;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid #f0dee1;
+    background: rgba(255, 254, 250, 0.9);
+    color: var(--rose-deep);
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(146, 106, 112, 0.18);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .sound.show {
+    display: flex;
+  }
+  .sound:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
   /* reveal */
   .reveal {
     opacity: 0;
@@ -535,6 +612,18 @@
 </style>
 </head>
 <body>
+
+<!-- Экран открытия -->
+<div class="intro" id="intro">
+  <div class="wash rose-tl"></div>
+  <div class="wash sage-b"></div>
+  <p class="eyebrow">Шақыру</p>
+  <p class="h-script">Адияның тойына қош келдіңіздер!</p>
+  <p class="intro-note">Әуенмен бірге ашыңыз</p>
+  <button class="intro-btn" id="openBtn">Шақыруды ашу</button>
+</div>
+<button class="sound" id="soundBtn" aria-label="Дыбысты өшіру/қосу">🔊</button>
+<audio id="bgm" src="music.mp3" loop preload="auto"></audio>
 
 <!-- Слайд 1: обложка -->
 <section class="slide">
@@ -684,6 +773,52 @@
     if (guest && guest.trim()) {
       document.getElementById("greetCaps").textContent = guest.trim() + "!";
     }
+
+    // Экран открытия: музыка + автопрокрутка слайдов
+    var intro = document.getElementById("intro");
+    var bgm = document.getElementById("bgm");
+    var soundBtn = document.getElementById("soundBtn");
+    var slides = document.querySelectorAll(".slide");
+    var autoTimer = null;
+    var autoStopped = false;
+
+    function autoNext(idx) {
+      if (autoStopped || idx >= slides.length) return;
+      slides[idx].scrollIntoView({ behavior: "smooth" });
+      autoTimer = setTimeout(function () {
+        autoNext(idx + 1);
+      }, 6500);
+    }
+    function stopAuto(e) {
+      if (e && soundBtn.contains(e.target)) return;
+      autoStopped = true;
+      if (autoTimer) clearTimeout(autoTimer);
+    }
+
+    document.getElementById("openBtn").addEventListener("click", function () {
+      intro.classList.add("hide");
+      bgm.play().catch(function () {});
+      soundBtn.classList.add("show");
+      autoTimer = setTimeout(function () {
+        autoNext(1);
+      }, 6500);
+      // Ручная прокрутка гостя останавливает автопоказ
+      setTimeout(function () {
+        ["wheel", "touchstart", "keydown"].forEach(function (ev) {
+          window.addEventListener(ev, stopAuto, { passive: true });
+        });
+      }, 500);
+    });
+
+    soundBtn.addEventListener("click", function () {
+      if (bgm.paused) {
+        bgm.play().catch(function () {});
+        soundBtn.textContent = "🔊";
+      } else {
+        bgm.pause();
+        soundBtn.textContent = "🔇";
+      }
+    });
 
     var els = document.querySelectorAll(".reveal");
     if ("IntersectionObserver" in window) {
