@@ -648,21 +648,6 @@
     <p class="venue-name">«Garden Park»</p>
     <p class="venue-type">тойханасы</p>
     <p class="venue-addr">Т.Рысқұлов көшесі, 87а</p>
-    <a
-      class="btn"
-      id="mapBtn"
-      href="https://maps.app.goo.gl/SvT1jYZBuxkRqSNv8"
-      target="_blank"
-      rel="noopener"
-      >Картаны ашу</a
-    >
-    <a
-      class="map-alt"
-      href="https://2gis.kz/geo/68.944430,41.348861"
-      target="_blank"
-      rel="noopener"
-      >2ГИС-те ашу</a
-    >
   </div>
 </section>
 
@@ -698,12 +683,6 @@
     var guest = m && decodeName(m[1]);
     if (guest && guest.trim()) {
       document.getElementById("greetCaps").textContent = guest.trim() + "!";
-    }
-
-    // Android: geo-ссылка открывает выбор карт
-    if (/android/i.test(navigator.userAgent)) {
-      document.getElementById("mapBtn").href =
-        "geo:41.348861,68.944430?q=41.348861,68.944430(Garden%20Park)";
     }
 
     var els = document.querySelectorAll(".reveal");
