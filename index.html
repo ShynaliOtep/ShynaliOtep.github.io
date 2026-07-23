@@ -144,15 +144,15 @@
 
 
   :root {
-    --paper: #fdf8f6;
+    --paper: #fdf6f4;
     --card: #fffefa;
-    --ink: #5c4a4d;
-    --ink-soft: #9a8589;
-    --rose: #e8b4bc;
-    --rose-deep: #c9848f;
-    --rose-wash: #f7e3e6;
-    --gold: #c29a5f;
-    --gold-deep: #a87f44;
+    --ink: #46343a;
+    --ink-soft: #85686f;
+    --rose: #dc9aa6;
+    --rose-deep: #b05d6d;
+    --rose-wash: #f6dde1;
+    --gold: #bd9053;
+    --gold-deep: #9c7238;
     --sage-wash: #e9f0e7;
   }
   * {
@@ -335,11 +335,12 @@
 
   /* slide 4 — date */
   .date-big {
-    font-size: 34px;
-    letter-spacing: 0.1em;
+    font-size: 27px;
+    letter-spacing: 0.07em;
     font-weight: 600;
     text-transform: uppercase;
     margin-top: 18px;
+    white-space: nowrap;
   }
   .time-big {
     font-size: 30px;
@@ -493,6 +494,25 @@
     font-size: 40px;
     color: var(--rose-deep);
     white-space: nowrap;
+  }
+
+  /* угловое оформление */
+  .deco {
+    position: absolute;
+    width: 148px;
+    height: auto;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .deco.tl {
+    top: 10px;
+    left: 6px;
+  }
+  .deco.br {
+    bottom: 10px;
+    right: 6px;
+    transform: rotate(180deg);
   }
 
   /* intro overlay */
@@ -818,6 +838,35 @@
         bgm.pause();
         soundBtn.textContent = "🔇";
       }
+    });
+
+    // Цветочные веточки по углам каждого слайда
+    var decoSvg =
+      '<svg class="deco" viewBox="0 0 160 120" aria-hidden="true">' +
+      '<path d="M8 8 C 40 30, 70 55, 118 96" stroke="#b8a08a" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+      '<path d="M34 30 C 46 24, 58 26, 66 34" stroke="#b8a08a" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
+      '<path d="M62 56 C 74 50, 86 52, 94 60" stroke="#b8a08a" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
+      '<ellipse cx="42" cy="22" rx="9" ry="5" fill="#cfdccb" transform="rotate(-30 42 22)"/>' +
+      '<ellipse cx="72" cy="48" rx="9" ry="5" fill="#cfdccb" transform="rotate(-28 72 48)"/>' +
+      '<ellipse cx="100" cy="74" rx="8" ry="4.6" fill="#cfdccb" transform="rotate(-30 100 74)"/>' +
+      '<circle cx="18" cy="14" r="8" fill="#dc9aa6"/>' +
+      '<circle cx="12" cy="22" r="5.6" fill="#e8b7bf"/>' +
+      '<circle cx="26" cy="20" r="5.6" fill="#e8b7bf"/>' +
+      '<circle cx="18" cy="14" r="2.6" fill="#b05d6d"/>' +
+      '<circle cx="56" cy="40" r="6" fill="#e8b7bf"/>' +
+      '<circle cx="56" cy="40" r="2" fill="#b05d6d"/>' +
+      '<circle cx="88" cy="66" r="5" fill="#e8b7bf"/>' +
+      '<circle cx="118" cy="96" r="4" fill="#dc9aa6"/>' +
+      "</svg>";
+    document.querySelectorAll(".slide").forEach(function (s) {
+      s.insertAdjacentHTML("afterbegin", decoSvg);
+      s.insertAdjacentHTML(
+        "afterbegin",
+        decoSvg.replace('class="deco"', 'class="deco tl"'),
+      );
+    });
+    document.querySelectorAll(".slide .deco:not(.tl)").forEach(function (d) {
+      d.classList.add("br");
     });
 
     var els = document.querySelectorAll(".reveal");
